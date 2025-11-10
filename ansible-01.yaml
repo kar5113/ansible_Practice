@@ -1,0 +1,6 @@
+- name: Ping the server
+  hosts: frontend #which group to target or can be hostname or ip
+  tasks:
+  - name: Ping the server
+    ansible.builtin.ping:
+

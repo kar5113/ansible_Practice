@@ -1,0 +1,25 @@
+// Ansible notes
+
+
+ansible all -i 54.87.2.32, -e ansible_user=ec2-user -e ansible_password=DevOps321 -m ping
+//Here -i indicates inventory file or the IP address of the target host
+//Here the comma after the IP is important to indicate it's a single host inventory
+//-e indicates extra variables like username and password
+//-m indicates the module to be used
+
+ansible all -i 54.87.2.32, -e ansible_user=ec2-user -e ansible_password=DevOps321 -b -m dnf -a "name=nginx state=installed" 
+ansible all -i 54.87.2.32, -e ansible_user=ec2-user -e ansible_password=DevOps321 -b -m service -a "name=nginx state=stopped"
+//Here -b indicates to run the command with sudo privileges
+//-m indicates the module to be used
+//-a indicates the arguments for the module
+
+// Ansible Playbook notes
+//Playbooks are written in YAML format
+//A playbook contains one or more plays
+//A play contains one or more tasks
+//A task uses a module to perform a specific action on the target host
+//To run a playbook, use the command: ansible-playbook <playbook_name>.yaml
+
+
+
+
