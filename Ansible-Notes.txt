@@ -21,5 +21,13 @@ ansible all -i 54.87.2.32, -e ansible_user=ec2-user -e ansible_password=DevOps32
 //To run a playbook, use the command: ansible-playbook <playbook_name>.yaml
 
 
+// Ansible Inventory notes
+//Inventory file contains the list of target hosts
+//Hosts can be grouped into groups for easier management
+//To specify a group, use square brackets [group_name]
+//To run ansible commands on a specific group, use the -i option with the inventory file and specify the group name
+//Example: ansible webservers -i inventory.ini -m ping  
+
+
 
 
