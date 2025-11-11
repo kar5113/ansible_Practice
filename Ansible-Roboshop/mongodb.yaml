@@ -12,11 +12,11 @@
       name: mongodb-org
       state: present
 
-  - name: Enable mongo service
-    ansible.builtin.service:
-      name: mongod
-      enabled: yes
-      state: started
+  # - name: Enable mongo service
+  #   ansible.builtin.service:
+  #     name: mongod
+  #     enabled: yes
+  #     state: started
 
   - name: Update listen address
     ansible.builtin.replace:
@@ -32,7 +32,7 @@
   - name: Enable mongo service
     ansible.builtin.service:
       name: mongod
-      enabled: yes
+      enabled: true
       state: started
 
 
