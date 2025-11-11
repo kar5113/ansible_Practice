@@ -10,13 +10,17 @@
     route53_domain: "kardev.space"
     security_group: sg-0e26215670f90eb6a
     instances:
-    - mongodb
-    # - sql
-    # - redis
-    # - rabbitmq
-    # - payment
-    # - catalogue
-    # - user
+     - mongodb
+     - mysql
+     - redis
+     - rabbitmq
+     - payment
+     - catalogue
+     - user
+     - shipping
+     - cart
+     - frontend
+
 
 
   tasks:
@@ -50,7 +54,7 @@
       record: "{{ item.item }}.{{ route53_domain }}"
       type: A
       ttl: 10
-      value: "{{ item.instances[0].private_ip_address }}"
+      value: "{{ item.instances[0].public_ip_address }}"
       wait: true
       overwrite: true
     loop: "{{ ec2_instances.results }}"

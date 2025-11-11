@@ -1,0 +1,106 @@
+- name: Catalogue server
+  hosts: catalogue
+  become: yes
+  tasks: 
+  - name: Disable nodejs
+    ansible.builtin.command: dnf module disable nodejs -y
+
+  - name: Enable nodejs 20
+    ansible.builtin.command: dnf module enable nodejs:20 -y
+
+  - name: Install node js 
+    ansible.builtin.package: 
+      name: nodejs
+      state: present
+
+  - name: Create a system user for catalogue
+    ansible.builtin.user:
+      name: roboshop
+      comment: roboshop system user
+      system: true
+      shell: /sbin/nologin
+      home: /app
+
+  - name: Recursively remove directory
+    ansible.builtin.file:
+      path: /app
+      state: absent
+
+  - name: Remove existing catalogue.zip file
+    ansible.builtin.file:
+      path: /tmp/catalogue.zip
+      state: absent
+
+  - name: create directory
+    ansible.builtin.file:
+      name: /app
+      state: directory
+
+  - name: Download appliction to app directory
+    ansible.builtin.get_url:
+      url: https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip 
+      dest: /tmp/catalogue.zip
+
+  - name: Unzip catalogue.zip that is already on the remote machine
+    ansible.builtin.unarchive:
+      src: /tmp/catalogue.zip
+      dest: /app
+      remote_src: yes
+
+  - name: Update packages based on package.json to their latest version.
+    community.general.npm:
+      path: /app
+
+  - name: copy catalogue service file
+    ansible.builtin.copy:
+      src: catalogue.service
+      dest: /etc/systemd/system/catalogue.service
+
+  # - name: Reload service catalogue, in all cases
+  #   ansible.builtin.systemd_service:
+  #     name: catalogue
+  #     enabled: yes
+  #     state: started
+  #     daemon_reload: true
+
+  - name: Setup the MongoDB repo file
+    ansible.builtin.copy:
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.repo
+
+  - name: Install mongo db client
+    ansible.builtin.package:
+      name: mongodb-mongosh
+      state: present
+
+  - name: connect to momgodb catalogue
+    ansible.builtin.command: mongosh mongodb.kardev.space --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')"
+    register: command_output
+
+  # - name: verify if records are already present or not in the mongo db
+  #   community.mongodb.mongodb_shell:
+  #     login_host: mongodb.kardev.space
+  #     eval: "db.getMongo().getDBNames().indexOf('catalogue')"
+  #     stringify: yes
+  #   register: command_output
+
+  - name: print command output
+    ansible.builtin.debug:
+      msg: "{{ command_output }}"
+
+  - name: Load products into mongo db 
+    ansible.builtin.shell: mongosh --host mongodb.kardev.space </app/db/master-data.js
+    when: command_output.stdout | int < 0
+
+  - name: Start catalogue service
+    ansible.builtin.service:  
+      name: catalogue
+      enabled: yes
+      state: started
+      daemon_reload: true
+
+
+
+
+
+      
