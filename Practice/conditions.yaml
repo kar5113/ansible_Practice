@@ -1,0 +1,13 @@
+- name: conditions
+  hosts: local
+  connection: local
+  vars: 
+    version: 2
+  tasks:
+    - name: Check Ansible version
+      debug:
+        msg: "Ansible version is 2.9 or higher"
+      when: version > 2.9
+      #when: version is version('2.9', '>=')
+      #when: version | int > 2.9
+  

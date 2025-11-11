@@ -1,0 +1,19 @@
+- name: Play 01
+  hosts: frontend
+  tasks:
+  - name: task 1
+    debug:
+      msg: "This is play 01, task 1"
+  - name: task 2
+    debug:
+      msg: "This is play 01, task 2"
+
+- name: Play 02
+  hosts: frontend
+  tasks:
+  - name: task 1
+    debug:
+      msg: "This is play 02, task 1"
+  - name: task 2
+    debug:
+      msg: "This is play 02, task 2"

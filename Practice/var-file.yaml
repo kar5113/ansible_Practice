@@ -1,0 +1,4 @@
+Course: terraform
+Version: 1.0
+Duration: 7 days
+variable_preference: var_file

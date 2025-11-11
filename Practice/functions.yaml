@@ -1,0 +1,118 @@
+
+- name: functions
+  hosts: local
+  connection: local
+  vars:
+    technologies: DevOps, Linux, Shell, Ansible # string
+    name: "Sivakumar reddy M"
+    gmail: Info@GMAIL.COM
+    ipaddress: "19222.168.0.1"
+    # dictionary == map
+    tags:
+      Application: payment
+      Environment: dev
+    # List
+    listTags:
+    - key: Application
+      value: payment
+    - key: Environment
+      value: dev
+  tasks:
+  # Print a greeting message using the 'name' variable.
+  # If 'name' is not defined, the default value 'Ramesh' will be used.
+  # Demonstrates the use of the 'default' filter in Jinja2 templating.
+  - name: default variable
+    ansible.builtin.debug:
+      msg: "Hello, {{ name | default('Ramesh') }}"
+    
+  # Convert the 'technologies' variable, which is a comma-separated string,
+  # into a list using the 'split' filter. This is useful for iterating over
+  # or processing each technology individually in later tasks.
+  - name: convert string to list
+    ansible.builtin.debug:
+      msg: "Technologies are: {{ technologies | split(',') }}"
+
+  # Convert the 'tags' dictionary (map) into a list of key-value pairs using the 'dict2items' filter.
+  # This is helpful when you need to loop over dictionary items in Ansible tasks.
+  - name: convert map to list
+    ansible.builtin.debug:
+      msg: "Tags are: {{ tags | dict2items }}"
+
+  # Convert the 'listTags' variable, which is a list of dictionaries with 'key' and 'value',
+  # into a single dictionary (map) using the 'items2dict' filter. This is useful for dynamic tag management.
+  - name: convert list into map
+    ansible.builtin.debug:
+      msg: "tag map: {{ listTags | items2dict }}"
+
+  # Read the contents of the 'student.yaml' file from the local directory,
+  # parse it as YAML, and store the resulting data structure in the 'student_yaml' variable.
+  # This allows you to use external YAML data within your playbook.
+  - name: read yaml and take it into variable
+    ansible.builtin.set_fact:
+      student_yaml: "{{ lookup('file', 'student.yaml') | from_yaml }}"
+
+  # Convert the data loaded from 'student.yaml' (now in 'student_yaml') into JSON format
+  # using the 'to_json' filter, and print it. This demonstrates data format conversion in Ansible.
+  - name: convert yaml into json
+    ansible.builtin.debug:
+      msg: "json: {{ student_yaml | to_json  }}"
+
+  # Save the 'student_yaml' data as pretty-printed JSON to the file 'stundent-data.json'.
+  # The 'to_nice_json' filter is used for better readability of the output file.
+  - name: save json to file
+    ansible.builtin.copy:
+      dest: ./stundent-data.json
+      content: "{{ student_yaml | to_nice_json  }}"
+
+  # Convert the value of the 'name' variable to uppercase letters using the 'upper' filter.
+  # Useful for formatting or enforcing case conventions in output or further processing.
+  - name: convert uppercase
+    ansible.builtin.debug:
+      msg: "{{ name | upper }}"
+
+  # Convert the value of the 'gmail' variable to lowercase letters using the 'lower' filter.
+  # This is helpful for normalizing email addresses or other case-insensitive data.
+  - name: convert lowercase
+    ansible.builtin.debug:
+      msg: "{{ gmail | lower }}"
+
+  # Validate whether the value of the 'ipaddress' variable is a valid IPv4 address
+  # using the 'ansible.utils.ipv4' filter. Returns a boolean result.
+  - name: check IP is valid or not
+    ansible.builtin.debug: 
+      msg: "{{ ipaddress | ansible.utils.ipv4 }}"
+
+  # Search for the 'root' user entry in the /etc/passwd file by running a shell command.
+  # The result is stored in the 'command_output' variable for later use or inspection.
+  - name: grep for root
+    #ansible.builtin.command: cat /etc/passwd | grep root
+    ansible.builtin.shell: cat /etc/passwd | grep root
+    register: command_output
+
+  # Print the output captured from the previous shell command (searching for 'root' in /etc/passwd).
+  # This helps verify the result of the shell command execution.
+  - name: print the command_output
+    ansible.builtin.debug:
+      msg: "{{ command_output }}"
+
+  # Execute the 'ls -ltr' command and redirect its output to the file /tmp/output.txt.
+  # Demonstrates how to use shell redirection in Ansible tasks with the shell module.
+  # The result is registered in 'redirect_output' and errors are ignored for demonstration purposes.
+  - name: redirect the output
+    ansible.builtin.shell: ls -ltr > /tmp/output.txt
+    register: redirect_output
+    ignore_errors: true
+
+  # Print the result of the previous output redirection command, including any stdout, stderr, or return code.
+  # Useful for debugging or confirming that the file redirection worked as expected.
+  - name: print redirect_output
+    ansible.builtin.debug:
+      msg: "{{ redirect_output }}"
+
+  - name: redirect the output using shell
+    ansible.builtin.shell: ls -ltr > /tmp/output.txt
+    register: redirect_output
+
+  - name: print redirect_output shell
+    ansible.builtin.debug:
+      msg: "{{ redirect_output }}"

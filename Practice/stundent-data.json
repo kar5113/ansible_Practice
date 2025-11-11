@@ -1,0 +1,54 @@
+[
+    {
+        "addresses": [
+            {
+                "city": "hyderabd",
+                "doorNo": "4-32",
+                "pin": 534565,
+                "street": "gandhi nagar",
+                "type": "current"
+            },
+            {
+                "city": "hyderabd",
+                "doorNo": "4-32",
+                "pin": 534565,
+                "street": "gandhi nagar",
+                "type": "perm"
+            }
+        ],
+        "age": 21,
+        "dob": "01-01-01",
+        "name": "sivakumar reddy m",
+        "skills": [
+            "java",
+            "devops",
+            "cloud"
+        ]
+    },
+    {
+        "addresses": [
+            {
+                "city": "hyderabd",
+                "doorNo": "4-32",
+                "pin": 534565,
+                "street": "gandhi nagar",
+                "type": "current"
+            },
+            {
+                "city": "hyderabd",
+                "doorNo": "4-32",
+                "pin": 534565,
+                "street": "gandhi nagar",
+                "type": "perm"
+            }
+        ],
+        "age": 21,
+        "dob": "01-01-01",
+        "name": "ramesh",
+        "skills": [
+            "java",
+            "devops",
+            "cloud"
+        ]
+    }
+]

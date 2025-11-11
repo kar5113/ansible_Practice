@@ -1,0 +1,91 @@
+- name: play level variables
+  hosts: localhost
+  connection: local #connect to localhost or you can give in inventory file as localhost
+  vars: 
+    Course: "Ansible"
+    Version: "2.9"
+    Duration: "5 days"
+  tasks:
+    - name: display course name from play level variables
+      debug:
+        msg: "Course name is {{ Course }} and version is {{ Version }} and duration is {{ Duration }}"
+
+
+- name: task level variables
+  hosts: localhost
+  connection: local
+  vars: 
+    Course: "Ansible"
+    Version: "2.9"
+    Duration: "5 days"
+  tasks:
+    - name: set task level variables from task level variables
+      vars: 
+        Course: "DevOps"
+        Version: "1.0"
+      debug:
+        msg: "Course name is {{ Course }} and version is {{ Version }} and duration is {{ Duration }}"
+
+- name: variables from variable file
+  hosts: localhost
+  connection: local
+  vars_files:
+  - var-file.yaml
+   # Any number of files can be included
+  tasks:
+    - name: display course name from variable file
+      debug:
+        msg: "Course name is {{ Course }} and version is {{ Version }} and duration is {{ Duration }}"
+
+
+- name: variables from prompt
+  hosts: localhost
+  connection: local
+  vars_prompt: 
+  - name: "Course"
+    prompt: "Enter the course name"
+    private: no # or false
+  - name: "Password"
+    prompt: "Enter the Password"
+    private: yes # or true
+  tasks:
+    - name: display course name from prompt
+      debug:
+        msg: "Course name is {{ Course }} and Password is {{ Password }}"
+
+
+- name: variables from inventory file
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: display course name from inventory file
+      debug:
+        msg: "Course name is {{ course }} and version is {{ version }} and duration is {{ duration }}"
+
+- name: variables from args
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: display course name from args
+      debug:
+        msg: "Course name is {{ course }} and version is {{ version }} and duration is {{ duration }}"
+
+- name: preference of variables
+  hosts: localhost
+  connection: local
+  vars_files:
+  - var-file.yaml
+  vars: 
+    variable_preference: "play-level-variable"
+  vars_prompt:
+  - name: "variable_preference"
+    prompt: "Enter the name variable"
+    private: no
+  tasks:
+    - name: display course name from different sources
+      vars: 
+        variable_preference: "task-level-variable"
+      debug:
+        msg: "{{ variable_preference }}"
+
+

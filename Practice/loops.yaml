@@ -1,0 +1,73 @@
+- name: loops in Ansible
+  hosts: localhost
+  connection: local 
+  tasks:
+    - name: loop through a list of items
+      debug:
+        msg: "Item is {{ item }}"
+      with_items:
+        - apple
+        - banana
+        - cherry
+
+    - name: loop through a range of numbers
+      debug:
+        msg: "Number is {{ item }}"
+      loop: "{{ range(1, 6) | list }}"
+
+    - name: loop through a dictionary
+      debug:
+        msg: "Key: {{ item.key }}, Value: {{ item.value }}"
+      loop: "{{ my_dict | dict2items }}"
+      vars:
+        my_dict:
+          name: John
+          age: 30
+          city: New York
+    - name: loop in dictionary example
+      debug:
+        msg: "The {{ item.key }} is {{ item.value }}"
+      with_dict:
+        name: Alice
+        age: 28
+        country: USA
+
+    - name: nested loops example
+      debug:
+        msg: "Outer item: {{ item.0 }}, Inner item: {{ item.1 }} {{ item.2 }}"
+      with_nested:
+        - [ 'A', 'B' ]
+        - [ 1, 2, 3 ]
+        - [ True, False ]
+
+    - name: loop with conditionals example
+      debug:
+        msg: "Even number: {{ item }}"
+      with_items: "{{ range(1, 11) | list }}"
+      when: item % 2 == 0 
+
+    - name: loop with dict
+      debug:
+        msg: "Key: {{ item.key }}, Value: {{ item.value }}"
+      loop:
+        - { key: 'fruit', value: 'apple' }
+        - { key: 'vegetable', value: 'carrot' }
+        - { key: 'grain', value: 'rice' }
+
+    - name: loop with file list
+      debug:
+        msg: "{{ item.key }}"
+      loop:
+      - key: file1.txt 
+      - key: file2.txt
+      - key: file3.txt
+
+
+
+
+
+
+    
+
+
+

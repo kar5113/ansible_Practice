@@ -1,0 +1,28 @@
+- name: Data- types in Ansible
+  hosts: localhost
+  connection: local
+  vars:
+    course: "Ansible"
+    version: 42
+    beta_version: 3.14
+    latest_version: true
+    courses_list:
+      - item1
+      - item2
+      - item3
+    concepts:
+      key1: value1
+      key2: value2
+      key3: value3
+  tasks:
+    - name: display data types
+      debug:
+        msg: |
+          Course: {{ course }} ({{ course | type_debug }})
+          Version: {{ version }} ({{ version | type_debug }})
+          Beta Version: {{ beta_version }} ({{ beta_version | type_debug }})
+          Latest Version: {{ latest_version }} ({{ latest_version | type_debug }})
+          Courses List: {{ courses_list }} ({{ courses_list | type_debug }})
+          Concepts: {{ concepts }} ({{ concepts | type_debug }})
+          Key1 from Concepts: {{ concepts.key1 }} ({{ concepts.key1 | type_debug }})
+          

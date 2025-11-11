@@ -18,6 +18,9 @@ ansible all -i 54.87.2.32, -e ansible_user=ec2-user -e ansible_password=DevOps32
 //A playbook contains one or more plays
 //A play contains one or more tasks
 //A task uses a module to perform a specific action on the target host
+//you can have multiple tasks in a playbook
+//Example playbook to install and start nginx on target host
+//you can have multiple plays in a playbook
 //To run a playbook, use the command: ansible-playbook <playbook_name>.yaml
 
 
@@ -27,6 +30,198 @@ ansible all -i 54.87.2.32, -e ansible_user=ec2-user -e ansible_password=DevOps32
 //To specify a group, use square brackets [group_name]
 //To run ansible commands on a specific group, use the -i option with the inventory file and specify the group name
 //Example: ansible webservers -i inventory.ini -m ping  
+
+
+//variables
+//Variables can be defined in inventory file, playbook, or separate variable files as key-value pairs.
+//variables can be defined in the inventory file under a group or for each target host. Refern documentation for more details.
+//Variables can be used to store values like usernames, passwords, package names, etc.
+//To use a variable in a playbook, use the syntax {{ variable_name }}
+//Example:
+//vars:
+//  nginx_package: nginx
+//tasks:
+//  - name: Install nginx
+//    dnf:
+//      name: "{{ nginx_package }}"
+//      state: installed
+//variables defined in playbook override those in inventory file
+//variables defined in variable files override those in playbook and inventory file
+//variables can be given at playlevel or at task level
+//variables can be taken from user input using vars_prompt module
+//variables can be overridden using -e option in ansible command
+
+//variable preference is as 
+//1. command line variables extra vars (-e option)
+//2. task level variables
+//3. variable files
+//4. from prompt 
+//5. play level variables
+//6. inventory file variables
+
+
+
+
+// Data Types in ansible variables\
+//1. String
+Example:
+name: "Ansible Course"
+//2. Integer
+Example:
+version: 2
+//3. Float
+Example:
+price: 9.99
+//4. Boolean
+Example:
+is_published: true
+//5. List
+Example:
+    tags:
+     - ansible
+     - automation
+//6. Dictionary
+Example:
+    database:
+      name: mydb
+      user: dbuser
+      password: dbpass
+
+
+// Conditionals in Ansible
+//Conditionals are used to execute tasks based on certain conditions
+//The 'when' keyword is used to define conditionals in ansible
+//Example:
+//tasks:
+//  - name: Install nginx on CentOS
+//    dnf:
+//      name: nginx
+//      state: installed
+//    when: ansible_facts['os_family'] == "RedHat"
+//You can use comparison operators like ==, !=, >, <, >=, <=
+//You can use logical operators like and, or, not
+//You can use filters to manipulate variables in conditionals
+//Example:
+//  when: version is version('2.9', '>=')
+//  when: version | int > 2.9
+//You can use facts to get information about the target host and use them in conditionals
+//Example:
+//  when: ansible_facts['memory_mb']['total'] > 2048    
+
+
+//Gathering Facts in Ansible
+//Facts are system information collected from target hosts
+//Facts are collected using the setup module
+//By default, facts are gathered at the beginning of a playbook run
+//To disable fact gathering, use gather_facts: no at the play level
+//To gather facts manually, use the setup module in a task
+//Example:
+//tasks:
+//  - name: Gather facts
+//    setup: {}
+//You can use facts in your playbook to make decisions based on the target host's configuration
+//Example:
+//  when: ansible_facts['os_family'] == "Debian"
+//You can filter the facts gathered using the filter parameter in the setup module
+//Example:
+//  - name: Gather only network facts
+//    setup:
+//      filter: "ansible_*_interfaces"
+//You can view the gathered facts using the debug module
+//Example:
+//  - name: Display gathered facts
+//    debug: var=ansible_facts
+//You can cache facts to improve performance using fact caching
+//Fact caching can be enabled in the ansible.cfg file
+//Example:
+//[defaults]
+//fact_caching = jsonfile
+//fact_caching_connection = /path/to/fact/cache
+//fact_caching_timeout = 86400  // 24 hours
+//You can use custom facts by placing scripts in the /etc/ansible/facts.d/ directory on the target host
+//Example:
+//  /etc/ansible/facts.d/custom_fact.sh
+//The script should output JSON data
+//Example output:
+//  {"custom_fact": "value" }
+
+
+
+// Loops in Ansible
+//Loops are used to iterate over a list of items and perform tasks for each item
+//The 'with_items' keyword is used to define loops in ansible
+//Example:  
+//tasks:
+//  - name: Install multiple packages
+//    dnf:
+//      name: "{{ item }}"
+//      state: installed
+//    with_items: or loop:
+//      - nginx
+//      - git
+//      - curl
+//You can use other loop keywords like with_dict, with_list, with_fileglob, with_nested, etc.
+//Example with_dict:
+//  - name: Create multiple users
+//    user:
+//      name: "{{ item.key }}"
+//      state: present
+//    with_dict:
+//      user1: {}
+//      user2: {}
+
+
+
+// Functionals in Ansible
+//Functionals are used to manipulate data in ansible
+//Filters are used to modify variables and data structures
+//Example:
+//  - name: Display uppercase name
+//    debug:
+//      msg: "{{ name | upper }}"
+//You can chain multiple filters together
+//Example:
+//  - name: Display trimmed and uppercase name
+//    debug:
+//      msg: "{{ name | trim | upper }}"
+//Commonly used filters include:
+//  - upper: Converts a string to uppercase
+//  - lower: Converts a string to lowercase
+//  - trim: Removes leading and trailing whitespace from a string
+//  - replace: Replaces occurrences of a substring with another substring
+//  - split: Splits a string into a list based on a delimiter
+//  - join: Joins a list into a string with a specified delimiter
+//  - length: Returns the length of a string or list
+//You can use filters in conditionals, loops, and other parts of your playbook
+//Example in conditional:
+//  when: name | length > 5
+//Example in loop:
+//  with_items: "{{ my_list | sort }}"  
+//You can create custom filters using Python
+
+
+//Error Handling in Ansible
+//Error handling is used to manage errors and failures in ansible playbooks
+//The 'ignore_errors' keyword is used to ignore errors in a task
+//Example:
+//  - name: Install nginx
+//    dnf:
+//      name: nginx
+//      state: installed
+//    ignore_errors: true
+//You can use the 'failed_when' keyword to define custom failure conditions for a task
+//Example:
+//  - name: Check if nginx is installed
+//    command: rpm -q nginx
+//    failed_when: "'not installed' in result.stdout" 
+
+
+
+
+
+
+
+
 
 
 
