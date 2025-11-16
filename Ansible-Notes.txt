@@ -215,6 +215,23 @@ Example:
 //    command: rpm -q nginx
 //    failed_when: "'not installed' in result.stdout" 
 
+//Ansible configuration file (ansible.cfg)
+//The ansible.cfg file is used to configure ansible settings
+//The ansible.cfg file can be located in the following locations (in order of precedence):
+//1. ANSIBLE_CONFIG environment variable
+//2. ansible.cfg file in the current directory
+//3. .ansible.cfg file in the home directory
+//4. /etc/ansible/ansible.cfg
+//Commonly used settings in ansible.cfg include:
+//[defaults]
+//inventory = /path/to/inventory/file, in this case no need to specif the -i option in ansible commands
+//remote_user = ec2-user
+//host_key_checking = False
+//retry_files_enabled = False
+//etc etc
+
+
+
 
 
 
