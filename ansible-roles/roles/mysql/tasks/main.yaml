@@ -8,6 +8,13 @@
     name: mysqld
     enabled: yes
     state: started
-
+#password comes from group vars and vault.yaml, it can be places anywhere, its like a var file
+#use --ask-vault-pass to prompt for vault password
+#or use --vault-password-file to provide a file that contains the vault password, file can be created anywhere, can be specifiesn in ansible.cfg or in command line or in environment variable etc etc
 - name: Change Root password
-  ansible.builtin.command: mysql_secure_installation --set-root-pass RoboShop@1
+  ansible.builtin.command: mysql_secure_installation --set-root-pass {{ MY_SQL_ROOT_PASSWORD }}
+
+# Example of looking up SSM parameter store value
+#for secrets management
+# - name: Lookup ssm parameter store in the current region
+#   ansible.builtin.debug: msg="{{ lookup('amazon.aws.aws_ssm', 'Hello' ) }}"

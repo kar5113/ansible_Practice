@@ -228,7 +228,201 @@ Example:
 //remote_user = ec2-user
 //host_key_checking = False
 //retry_files_enabled = False
+//log_path = /var/log/ansible.log 
 //etc etc
+//Ansible tags
+//Tags are used to categorize tasks in ansible playbooks
+//Tags allow you to run specific tasks or groups of tasks in a playbook
+//The 'tags' keyword is used to define tags for tasks
+//Example:
+//tasks:
+//  - name: Install nginx
+//    dnf:
+//      name: nginx
+//      state: installed
+//    tags:
+//      - install
+//  - name: Start nginx
+//    service:
+//      name: nginx
+//      state: started
+//    tags:
+//      - start
+//To run tasks with specific tags, use the --tags option in the ansible-playbook command
+//Example:
+//ansible-playbook playbook.yaml --tags "install"
+//To skip tasks with specific tags, use the --skip-tags option in the ansible-playbook command
+//Example:
+//ansible-playbook playbook.yaml --skip-tags "start"
+//
+//include and import in Ansible
+//include and import are used to include or import other playbooks or task files into a play
+//The 'include' keyword is used to include a playbook or task file at runtime
+//Example:
+//  - name: Include tasks
+//    include: tasks.yaml
+//The 'import' keyword is used to import a playbook or task file at parse time
+//Example:
+//  - name: Import tasks
+//    import_tasks: tasks.yaml
+//The main difference between include and import is that include is dynamic and can be used conditionally
+//while import is static and is processed at the time of parsing the playbook
+//Use include when you want to include tasks based on certain conditions
+//Use import when you want to include tasks unconditionally
+
+//Handlers in Ansible
+//Handlers are special tasks that are triggered by other tasks when they report a change
+//Handlers are defined using the 'handlers' section in a playbook
+//Example:
+//handlers:
+//  - name: restart nginx   
+//    service:
+//      name: nginx
+//      state: restarted
+//To notify a handler from a task, use the 'notify' keyword
+//Example:
+//  - name: Install nginx
+//    dnf:
+//      name: nginx
+//      state: installed
+//    notify:
+//      - restart nginx
+//Handlers are executed at the end of a play, after all tasks have been completed
+//Handlers are only executed once, even if they are notified multiple times
+//Handlers can also have conditionals using the 'when' keyword
+//Example:
+//  - name: restart nginx   
+//    service:
+//      name: nginx
+//      state: restarted
+//    when: ansible_facts['os_family'] == "RedHat"  
+//You can use handlers to manage services, restart applications, or perform any other actions that need to be triggered by changes in tasks
+
+//Roles in Ansible
+//Roles are a way to organize and reuse ansible code
+//Roles are defined in a specific directory structure
+//A role typically contains the following directories:
+//  - tasks: Contains the main tasks for the role
+//  - handlers: Contains the handlers for the role
+//  - templates: Contains the Jinja2 templates for the role
+//  - files: Contains the static files for the role
+//  - vars: Contains the variables for the role 
+//  - defaults: Contains the default variables for the role
+//  - meta: Contains the metadata for the role
+//To use a role in a playbook, use the 'roles' keyword
+//Example:
+//  - hosts: webservers
+//    roles:
+//      - nginx_role
+//You can pass variables to roles using the 'vars' keyword
+//Example:
+//  - hosts: webservers
+//    roles:
+//      - role: nginx_role
+//        vars:
+//          nginx_port: 8080
+//Roles can be shared and reused across multiple playbooks and projects
+//You can create your own roles or use roles from Ansible Galaxy, a repository of community-contributed roles
+//To install a role from Ansible Galaxy, use the ansible-galaxy command
+
+
+//Dynamic Inventory in Ansible
+//Dynamic inventory allows you to generate inventory dynamically using scripts or plugins
+//Dynamic inventory scripts can be written in any programming language that can output JSON or YAML
+//Ansible provides several built-in dynamic inventory plugins for popular cloud providers like AWS, GCP, Azure, etc.
+//To use a dynamic inventory script, specify the script path in the -i option of the ansible command
+//Example:
+//ansible all -i /path/to/dynamic_inventory_script.py -m ping
+//To use a dynamic inventory plugin, specify the plugin name in the ansible.cfg file or in the -i option
+//Example in ansible.cfg:
+//[defaults]
+//inventory = aws_ec2
+//Example in ansible command:
+//ansible all -i aws_ec2 -m ping
+//Dynamic inventory allows you to manage large and dynamic environments more efficiently
+//You can also combine static and dynamic inventory by specifying multiple inventory sources in the ansible.cfg file
+//Example:
+//[defaults]
+//inventory = /path/to/static_inventory.ini, aws_ec2
+
+//plugins in Ansible
+//Plugins are used to extend the functionality of ansible
+//Ansible provides several types of plugins, including connection plugins, callback plugins, lookup plugins, filter plugins, etc.
+//Connection plugins are used to connect to target hosts using different protocols like SSH, WinRM, etc.
+//Callback plugins are used to customize the output of ansible commands and playbooks
+//Lookup plugins are used to retrieve data from external sources like files, databases, etc.
+//Filter plugins are used to manipulate data in ansible using custom filters
+//To use a plugin, specify the plugin name in the appropriate section of the ansible.cfg file or in the playbook
+//Example in ansible.cfg:
+//[defaults]
+//stdout_callback = yaml
+//Example in playbook:
+//  - name: Display file content
+//    debug:
+//      msg: "{{ lookup('file', '/path/to/file.txt') }}"
+//You can also create your own custom plugins using Python
+//Custom plugins should be placed in the appropriate plugin directory and follow the ansible plugin structure
+
+//Ansible Vault
+//Ansible Vault is used to encrypt sensitive data in ansible playbooks and inventory files
+//To create an encrypted file using ansible vault, use the command: ansible-vault create <file_name>
+//To encrypt an existing file, use the command: ansible-vault encrypt <file_name>
+//To decrypt an encrypted file, use the command: ansible-vault decrypt <file_name>
+//To edit an encrypted file, use the command: ansible-vault edit <file_name>
+//To run a playbook with encrypted files, use the --ask-vault-pass option in the ansible-playbook command
+//Example:
+//ansible-playbook playbook.yaml --ask-vault-pass
+//You can also use the --vault-password-file option to specify a file containing the vault password
+//Example:
+//ansible-playbook playbook.yaml --vault-password-file /path/to/vault_password_file
+//You can encrypt specific variables in a playbook using the 'vars' section with the 'vault' keyword
+//Example:
+//vars:
+//  secret_password: !vault |
+//          $ANSIBLE_VAULT;1.1;AES256
+//          6162636465666768696a6b6c6d6e6f70
+//          7172737475767778797a7b7c7d7e7f80
+//#password comes from group vars and vault.yaml, it can be places anywhere, its like a var file
+#use --ask-vault-pass to prompt for vault password
+#or use --vault-password-file to provide a file that contains the vault password, file can be created anywhere, can be specifiesn in ansible.cfg or in command line or in environment variable etc etc
+//You can use ansible vault to securely manage sensitive data like passwords, API keys, etc. in your ansible projects
+
+//Secrets manager
+//Ansible can integrate with various secrets management tools like HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, etc.
+//To use a secrets manager, you need to install the appropriate ansible collection or plugin for the secrets manager
+//You can then use the lookup plugins provided by the collection or plugin to retrieve secrets from the secrets manager
+//Example using HashiCorp Vault:
+//  - name: Retrieve secret from HashiCorp Vault
+//    debug:
+//      msg: "{{ lookup('hashi_vault', 'secret/data/mysecret:password ') }}"
+//Example using AWS Secrets Manager:
+//  - name: Retrieve secret from AWS Secrets Manager
+//    debug:
+//      msg: "{{ lookup('aws_secretsmanager', 'mysecret:SecretString') }}"  
+//Using a secrets manager allows you to securely manage and retrieve sensitive data in your ansible projects without hardcoding them in playbooks or inventory files 
+
+//SSM Parameter Store
+//Ansible can integrate with AWS Systems Manager (SSM) Parameter Store to retrieve parameters and secrets
+//To use SSM Parameter Store, you need to install the amazon.aws collection
+//You can then use the aws_ssm lookup plugin to retrieve parameters from SSM Parameter Store
+//Example:
+//  - name: Retrieve parameter from SSM Parameter Store
+//    debug:
+//      msg: "{{ lookup('amazon.aws.aws_ssm', 'my_parameter_name', region='us-east-1' ) }}"  
+//Using SSM Parameter Store allows you to securely manage and retrieve parameters and secrets in your ansible projects without hardcoding them in playbooks or inventory files
+
+//Ansible forks
+//Forks are used to define the number of parallel processes ansible can use to execute tasks on target hosts
+//By default, ansible uses 5 forks
+//You can change the number of forks by specifying the 'forks' setting in the ansible.cfg file
+//Example:
+//[defaults]
+//forks = 10
+//You can also specify the number of forks using the -f or --forks option in the ansible command
+//Example:
+//ansible all -i inventory.ini -m ping -f 10
+//Increasing the number of forks can improve performance when managing a large number of target hosts
+
 
 
 
