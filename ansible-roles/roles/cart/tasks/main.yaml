@@ -1,0 +1,14 @@
+- name: Application setuop
+  ansible.builtin.import_role: 
+    name: common
+    tasks_from: app-setup.yaml
+
+- name: Install Node js 20
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: node-js.yaml
+
+- name: "{{ component }} installation"
+  ansible.builtin.import_role: 
+    name: common    
+    tasks_from: system-setup.yaml

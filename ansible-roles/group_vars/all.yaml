@@ -1,0 +1,10 @@
+REDIS_HOST: redis.kardev.space
+MONGODB_HOST: mongodb.kardev.space
+MYSQL_HOST: mysql.kardev.space
+RABBITMQ_HOST: rabbitmq.kardev.space
+CATALOGUE_HOST: catalogue.kardev.space
+USER_HOST: user.kardev.space
+PAYMENT_HOST: payment.kardev.space
+CART_HOST: cart.kardev.space
+SHIPPING_HOST: shipping.kardev.space
+FRONTEND_HOST: frontend.kardev.space

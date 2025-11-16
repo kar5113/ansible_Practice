@@ -1,0 +1,21 @@
+- name: import roles
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: app-setup.yaml
+
+- name: install node js and download dependencies
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: node-js.yaml
+
+- name: Copy catalogue service file
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: system-setup.yaml
+
+
+
+
+
+
+    

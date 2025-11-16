@@ -1,0 +1,28 @@
+- name: Install redis, By default redis 6 is available, We would like to enable 7 version and install list.
+  ansible.builtin.command: dnf module disable redis -y
+
+- name: Enable Redis 7 module
+  ansible.builtin.command: dnf module enable redis:7 -y
+
+- name: Install redis server
+  ansible.builtin.package:
+    name: redis
+    state: present
+  
+- name: Update listen address
+  ansible.builtin.replace:
+    path: /etc/redis/redis.conf
+    regexp: '127.0.0.1'
+    replace: '0.0.0.0'
+
+- name: disable protected module
+  ansible.builtin.lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: 'protected-mode'
+    line: 'protected-mode no'
+
+- name: Enable redis service
+  ansible.builtin.service:
+    name: redis
+    enabled: yes
+    state: started
