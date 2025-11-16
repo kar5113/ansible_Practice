@@ -92,10 +92,10 @@
     ansible.builtin.shell: mongosh --host mongodb.kardev.space </app/db/master-data.js
     when: command_output.stdout | int < 0
 
-  - name: Start catalogue service
-    ansible.builtin.service:  
+  - name: Reload service catalogue, in all cases
+    ansible.builtin.systemd_service:
       name: catalogue
-      enabled: yes
+      enabled: true
       state: started
       daemon_reload: true
 
