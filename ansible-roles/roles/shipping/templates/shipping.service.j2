@@ -5,7 +5,7 @@ Description=Shipping Service
 User=roboshop
 // highlight-start
 Environment=CART_ENDPOINT={{ CART_HOST }}:8080
-Environment=DB_HOST={{ DB_HOST}}
+Environment=DB_HOST={{ MYSQL_HOST}}
 // highlight-end
 ExecStart=/bin/java -jar /app/shipping.jar
 SyslogIdentifier=shipping
