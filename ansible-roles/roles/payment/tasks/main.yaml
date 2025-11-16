@@ -4,7 +4,7 @@
     tasks_from: app-setup.yaml
 
 - name: Python Setup  
-  ansible.bui;tin.import_role:
+  ansible.buitin.import_role:
     name: common
     tasks_from: python-setup.yaml
 
