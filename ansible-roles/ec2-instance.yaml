@@ -38,15 +38,15 @@
     loop: "{{ instances }}"
     register: ec2_instances
 
-  # - name: print ec2 instances info
-  #   ansible.builtin.debug:
-  #     msg: "{{ item.instances[0].public_ip_address }}"
-  #   loop: "{{ ec2_instances.results }}"
+  - name: print ec2 instances info
+    ansible.builtin.debug:
+      msg: "{{ item.instances[0].public_ip_address }}"
+    loop: "{{ ec2_instances.results }}"
 
-  # - name: print ec2 instances info
-  #   ansible.builtin.debug:
-  #     msg: "{{ item.instances[0].private_ip_address }}"
-  #   loop: "{{ ec2_instances.results }}"
+  - name: print ec2 instances info
+    ansible.builtin.debug:
+      msg: "{{ item.instances[0].private_ip_address }}"
+    loop: "{{ ec2_instances.results }}"
 
 ## implement route53 records and for each instance that is not the frontend add a record with private ip address
 ## for frontend use public ip address
@@ -61,6 +61,23 @@
       value: "{{ item.instances[0].public_ip_address }}"
       wait: true
       overwrite: true
+    when: item.item == "frontend"
     loop: "{{ ec2_instances.results }}"
+    
+
+
+  - name: Add ip_address of instances to route53 record
+    amazon.aws.route53:
+      state: present
+      hosted_zone_id: "{{ route53_zone_id }}"
+      record: "{{ item.item }}.{{ route53_domain }}"
+      type: A
+      ttl: 10
+      value: "{{ item.instances[0].private_ip_address }}"
+      wait: true
+      overwrite: true
+    when: item.item != "frontend"
+    loop: "{{ ec2_instances.results }}"
+    
 
     
