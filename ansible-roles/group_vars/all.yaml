@@ -8,3 +8,5 @@ PAYMENT_HOST: payment.kardev.space
 CART_HOST: cart.kardev.space
 SHIPPING_HOST: shipping.kardev.space
 FRONTEND_HOST: frontend.kardev.space
+
+MY_SQL_ROOT_PASSWORD: "{{ lookup('amazon.aws.aws_ssm', 'my_sql_root_password', region='us-east-1' ) }}"
