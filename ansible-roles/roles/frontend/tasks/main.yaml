@@ -38,7 +38,7 @@
 
 - name: copy the nginx configuration file
   ansible.builtin.copy:
-    src: nginx.conf
+    src: nginx.conf.j2
     dest: /etc/nginx/nginx.conf
 
 - name: Reload service nginx, in all cases
