@@ -425,6 +425,12 @@ Example:
 
 
 
+#### Dynamic Inventory with AWS EC2 Instances ####
+//To use dynamic inventory with AWS EC2 instances, you need to install the amazon.aws collection
+//You can then use the aws_ec2 inventory plugin to dynamically generate inventory from your AWS EC
+
+
+
 
 
 

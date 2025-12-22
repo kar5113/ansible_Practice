@@ -11,6 +11,13 @@
 #password comes from group vars and vault.yaml, it can be places anywhere, its like a var file
 #use --ask-vault-pass to prompt for vault password
 #or use --vault-password-file to provide a file that contains the vault password, file can be created anywhere, can be specifiesn in ansible.cfg or in command line or in environment variable etc etc
+# Example: ansible-playbook playbook.yaml --vault-password-file ~/.vault_pass.txt or ansible-playbook playbook.yaml -e @vault.yaml --vault-password-file ~/.vault_pass.txt or ansible-playbook playbook.yaml -e @vault.yaml --ask-vault-pass 
+# To keep the vaut password in environment variable use: export ANSIBLE_VAULT_PASSWORD_FILE=~/.vault_pass.txt and then run ansible-playbook playbook.yaml -e @vault.yaml
+# To keep the vault password in ansible.cfg file use:
+# [defaults]
+# vault_password_file = ~/.vault_pass.txt
+# and then run ansible-playbook playbook.yaml -e @vault.yaml
+# ansible.cfg file can be placed in /etc/ansible/ansible.cfg or in ~/.ansible.cfg or in current working directory ./ansible.cfg
 - name: Change Root password
   ansible.builtin.command: mysql_secure_installation --set-root-pass {{ MY_SQL_ROOT_PASSWORD }}
 
